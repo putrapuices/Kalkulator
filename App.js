@@ -1,43 +1,67 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
+import { StyleSheet, Text, View, TextInput } from 'react-native';
 
 export default class App extends React.Component {
-  constructor() {
-    super();
+  constructor(props){
+    super(props)
     this.state = {
       hasil: 0,
-      angka1: 0,
-      angka2: 0, 
-    };
+      input: '',
+    }
   }
 
-  hitung = () => {
-    const { angka1, angka2 } = this.state;
-    
-   // this.setState({ hasil: angka1 / angka2 });
-   this.setState({ hasil: angka1 + angka2 });
-   this.setState({ hasil: angka1 - angka2 });
-   this.setState({ hasil: angka1 / angka2 });
-   this.setState({ hasil: angka1 * angka2 });
-  };
+  input = (val) => {
+    const {input} = this.state;
+    const inputValue = val;
+
+    this.setState({input: inputValue})
+    const hasil = this.hasilPerhitungan(inputValue)
+    this.setState({hasil: hasil})
+  }
+
+  hasilPerhitungan = (inputValue) => {
+    const arrayInput = inputValue.split("");
+    let hasil = 0;
+    let angka1 = "";
+    let angka2 = "";
+    let operator = "";
+
+    for (var i = 0; i < arrayInput.length; i++) {
+      switch (arrayInput[i]){
+        case "+": operator = "+"; angka1 = hasil; angka2 = ""; break;
+        case "-": operator = "-"; angka1 = hasil; angka2 = ""; break;
+        case "*": operator = "*"; angka1 = hasil; angka2 = ""; break;
+        case "/": operator = "/"; angka1 = hasil; angka2 = ""; break;
+        default:
+
+        arrayInput[i] == " " ? angka2 = "" : angka2 += String(arrayInput[i])
+
+        angka1 == "" ? angka1 = angka2 : hasil;
+
+        if (arrayInput[i] != " ") {
+          switch(operator){                    
+            case "+": hasil = Number(angka1) + Number(angka2); break;
+            case "-": hasil = Number(angka1) - Number(angka2); break;
+            case "*": hasil = Number(angka1) * Number(angka2); break;
+            case "/": hasil = Number(angka1) / Number(angka2); break;
+            default: hasil = Number(angka1) + 0;
+          }
+        }
+      }
+
+    }
+
+    return hasil;
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <Text>Kalkulator</Text>
-        <TextInput
-          style={styles.inputBox}
-          value={String(this.state.angka1,this.state.angka2)}   
-          onChangeText={
-            text => this.setState ({ angka1: Number(text), angka2:Number(text)})
-          }
-        />
-       <Text>Hasil</Text>
-       // <Text style={{ fontSize: 32 }}>{this.state.hasil} />
-
-        <Text style={{ fontSize: 39 }}>{this.state.hitung} />
-        //<Button title="Hitung" onPress={this.hitung} />
-    //</View>
-    );
+      <Text style={ {fontSize: 30} }>Kalkulator</Text>
+      <TextInput style={styles.inputBox} value={this.state.input} onChangeText={(val) => this.input(val)} />
+      <Text style={ {fontSize: 25} }>Hasil : {this.state.hasil}</Text>
+      </View>
+      );
   }
 }
 
@@ -47,15 +71,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 32,
+    margin: 32
   },
-
   inputBox: {
     width: '100%',
     borderWidth: 1,
     borderColor: 'black',
     borderRadius: 6,
     padding: 12,
-    margin: 6,
-  },
+    margin: 6
+  }
 });
